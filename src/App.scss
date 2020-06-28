@@ -1,5 +1,14 @@
 .App {
   text-align: center;
+  position: relative;
+  // bg-size 一定要接在 bg-position后  bg-positoon/bg-size
+  background: url('./img/wallpaper.jpg') center/cover no-repeat;
+  // background-repeat: no-repeat;
+  // background-position: center;
+  // background-size: cover;
+  min-width: 1500px;
+  height: 100vh;
+
 }
 
 .App-logo {
@@ -32,6 +41,7 @@
   from {
     transform: rotate(0deg);
   }
+
   to {
     transform: rotate(360deg);
   }
