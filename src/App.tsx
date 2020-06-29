@@ -1,11 +1,13 @@
 import React from "react";
-// import logo from './logo.svg';
+import { Docker } from "./components/Docker";
 import "./App.scss";
 
 function App() {
   return (
     <div className="App">
-      <div>123</div>
+      <footer>
+        <Docker></Docker>
+      </footer>
     </div>
   );
 }
