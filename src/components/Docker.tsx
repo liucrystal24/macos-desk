@@ -12,7 +12,6 @@ export const Docker = () => {
     "Drawing.png",
   ]);
   const dockRef = useRef<HTMLDivElement>(null);
-  console.log(dockRef);
   const getOffset = useCallback(
     (el: HTMLElement, offset: "top" | "left"): number => {
       const elOffset = offset === "top" ? el.offsetTop : el.offsetLeft;
