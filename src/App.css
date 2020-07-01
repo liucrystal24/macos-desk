@@ -10,15 +10,24 @@
   position: fixed;
   bottom: 0;
   width: 100vw;
+  display: -webkit-box;
+  display: -ms-flexbox;
   display: flex;
-  justify-content: center;
+  -webkit-box-pack: center;
+      -ms-flex-pack: center;
+          justify-content: center;
 }
 
 .App footer div {
+  display: -webkit-box;
+  display: -ms-flexbox;
   display: flex;
-  align-items: flex-end;
+  -webkit-box-align: end;
+      -ms-flex-align: end;
+          align-items: flex-end;
   background-color: rgba(222, 223, 227, 0.7);
-  box-shadow: rgba(0, 0, 0, 0.31) 0px 0px 1px, rgba(0, 0, 0, 0.18) 0px 0px 5px, rgba(0, 0, 0, 0.3) 0px 8px 50px;
+  -webkit-box-shadow: rgba(0, 0, 0, 0.31) 0px 0px 1px, rgba(0, 0, 0, 0.18) 0px 0px 5px, rgba(0, 0, 0, 0.3) 0px 8px 50px;
+          box-shadow: rgba(0, 0, 0, 0.31) 0px 0px 1px, rgba(0, 0, 0, 0.18) 0px 0px 5px, rgba(0, 0, 0, 0.3) 0px 8px 50px;
   border-top-left-radius: 0.4rem;
   border-top-right-radius: 0.4rem;
 }
