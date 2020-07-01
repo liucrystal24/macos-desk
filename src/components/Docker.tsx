@@ -1,118 +1,105 @@
-import React, { useState, useRef, useCallback, useEffect } from "react";
+import React, { useState, useEffect, useRef, useCallback } from "react";
 
 export const Docker = () => {
-  // Docker栏 默认高度(宽度)
+  // docker 图标默认宽度
   const [defaultWidth] = useState(76);
-
-  // Docker栏 图标列表
+  // dockDiv
+  const dockerRef = useRef<HTMLDivElement>(null);
+  // docker 图标列表
   const [dockList] = useState<string[]>([
     "Finder.png",
     "Launchpad.png",
-    "PrefApp.png",
     "Chrome.png",
+    "PrefApp.png",
     "Terminal.png",
     "Calculator.png",
     "Drawing.png",
   ]);
+  // docker 图标 放大系数
+  const [scaleNum] = useState(2);
 
-  // Docker栏 html对象
-  const dockRef = useRef<HTMLDivElement>(null);
-
-  // getOffset : Docker 栏 距离 浏览器 顶/左 边距( dockRef + footer )，方便以后 Docker 栏左移时的计算
-  const getOffset = useCallback(
-    (el: HTMLElement, offset: "top" | "left"): number => {
-      const elOffset = offset === "top" ? el.offsetTop : el.offsetLeft;
-      if (el.offsetParent == null) {
-        return elOffset;
+  // dockerRef 距离<html>内边距(div->footer + footer-> html)
+  const getDockerOffset = useCallback(
+    (el: HTMLElement, offsetStyle: "top" | "left"): number => {
+      const getOffset = offsetStyle === "top" ? el.offsetTop : el.offsetLeft;
+      if (el.offsetParent === null) {
+        return getOffset;
       }
-      // elOffset : Docker 栏 相对于 footer 的上边距; 后一个是 footer 相对于 html 的上边距
-      return elOffset + getOffset(el.offsetParent as HTMLElement, offset);
+      return (
+        getOffset + getDockerOffset(el.offsetParent as HTMLElement, offsetStyle)
+      );
     },
     []
   );
-  const mousemove = useCallback(
-    ({ clientX, clientY }) => {
-      if (!dockRef.current) {
-        return;
-      }
-      // console.log({ clientX, clientY });
-      const imgList = dockRef.current.childNodes;
-      for (let i = 0; i < imgList.length; i++) {
-        const img = imgList[i] as HTMLImageElement;
-        // x : 鼠标 到 图标中心点 的 横坐标差
-        /**
-         * offsetLeft: 相对于 offsetParent 的左边距，此处是footer
-         * */
-        console.log(i, img.offsetLeft);
-        const x = img.offsetLeft + defaultWidth / 2 - clientX;
 
-        /**
-         * offsetTop: 相对于 offsetParent 的上边距（分正负），此处是 footer
-         * offsetHeight: 元素的高度，包括 padding,border
-         * y : 鼠标 到 图标中心点 的 纵坐标差
-         * Math.sqrt(x * x + y * y) : 鼠标 到 图标中心的 距离
-         * imgList.length * defaultWidth : Docker 栏总长
-         * */
-        // console.log(i, img.offsetTop);
-        const y =
-          img.offsetTop +
-          getOffset(dockRef.current, "top") +
-          img.offsetHeight / 2 -
-          clientY;
-        let imgScale =
-          1 - Math.sqrt(x * x + y * y) / (imgList.length * defaultWidth);
-        if (imgScale < 0.5) {
-          imgScale = 0.5;
-        }
-        // 鼠标移动后图标放大，否则 显示为原图标大小 (2 * 0.5 = 1 , 2 为基础倍数。可以调整)
-        img.width = defaultWidth * 2 * imgScale;
-      }
-    },
-    [defaultWidth, getOffset]
-  );
-
-  // mouseleave 事件： 鼠标离开后，所有图标 宽高重回 defaultWidth
-  const mouseleave = useCallback(() => {
-    if (!dockRef.current) {
-      console.log("!", dockRef.current);
+  // mouseleave 图标宽度恢复默认宽度
+  const mouseLeave = useCallback(() => {
+    if (!dockerRef.current) {
       return;
     }
-    // Docker 栏 所有子元素: Nodelist类型
-    const imgList = dockRef.current.childNodes;
-    console.log("have", dockRef.current);
+    console.log("leave");
+    const imgList = dockerRef.current.childNodes;
     for (let i = 0; i < imgList.length; i++) {
       const img = imgList[i] as HTMLImageElement;
-      // 图片为正方形，所以只需要设置宽度，高宽相等
       img.width = defaultWidth;
     }
   }, [defaultWidth]);
 
-  // 初始化样式
-  useEffect(() => {
-    mouseleave();
-  }, [mouseleave]);
+  /**
+   * mousemove 图标宽度变化规则
+   * offsetTop 元素左上角到 offsetParent 的上内边距，此处为 footer
+   * offsetLeft 元素左上角到 offsetParent 的左内边距，此处为 footer
+   *
+   */
+  const mouseMove = useCallback(
+    ({ clientX, clientY }) => {
+      if (!dockerRef.current) {
+        return;
+      }
+      const imgList = dockerRef.current.childNodes;
+      for (let i = 0; i < imgList.length; i++) {
+        const img = imgList[i] as HTMLImageElement;
+        // x:点击处距离图标中心的横向距离
+        const x = img.offsetLeft + img.offsetWidth / 2 - clientX;
+        // y:点击处距离图标中心的纵向距离
+        const y =
+          img.offsetTop +
+          img.offsetHeight / 2 +
+          getDockerOffset(dockerRef.current, "top") -
+          clientY;
+        let scaleImg =
+          1 - Math.sqrt(x * x + y * y) / (imgList.length * defaultWidth);
+        if (scaleImg < 0.5) {
+          scaleImg = 0.5;
+        }
+        img.width = defaultWidth * scaleNum * scaleImg;
+      }
+    },
+    [getDockerOffset, defaultWidth, scaleNum]
+  );
 
-  // 绑定 mousemove , mouseleave 事件
+  // 初始化 图标宽度
   useEffect(() => {
-    if (!dockRef.current) {
+    mouseLeave();
+  }, [mouseLeave]);
+
+  useEffect(() => {
+    if (!dockerRef.current) {
       return;
     }
-    const dockBackground: HTMLDivElement = dockRef.current;
-    dockBackground.addEventListener("mousemove", mousemove);
-    dockBackground.addEventListener("mouseleave", mouseleave);
+    const docker: HTMLDivElement = dockerRef.current;
+    docker.addEventListener("mousemove", mouseMove);
+    docker.addEventListener("mouseleave", mouseLeave);
     return () => {
-      dockBackground.removeEventListener("mousemove", mousemove);
-      dockBackground.removeEventListener("mouseleave", mouseleave);
+      docker.removeEventListener("mousemove", mouseMove);
+      docker.removeEventListener("mouseleave", mouseLeave);
     };
-  }, [mousemove, mouseleave]);
+  }, [mouseMove, mouseLeave]);
 
-  // Docker 栏
   return (
-    <div ref={dockRef} style={{ height: defaultWidth }}>
+    <div ref={dockerRef} style={{ height: defaultWidth }}>
       {dockList.map((item, index) => {
-        return (
-          <img src={require("../img/" + item)} alt={item} key={index + item} />
-        );
+        return <img src={require("../img/" + item)} key={index} alt={item} />;
       })}
     </div>
   );
