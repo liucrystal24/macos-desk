@@ -7,6 +7,15 @@
   // background-size: cover;
   min-width: 1500px;
   height: 100vh;
+  // 暂时弹窗 canvas,定位影响数值
+  .modal {
+    width: 100vw;
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+  // Docker 栏
   footer {
     position: fixed;
     bottom: 0;

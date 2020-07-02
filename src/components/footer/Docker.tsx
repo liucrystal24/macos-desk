@@ -99,7 +99,7 @@ export const Docker = () => {
   return (
     <div ref={dockerRef} style={{ height: defaultWidth }}>
       {dockList.map((item, index) => {
-        return <img src={require("../img/" + item)} key={index} alt={item} />;
+        return <img src={require("../../img/" + item)} key={index} alt={item} />;
       })}
     </div>
   );
