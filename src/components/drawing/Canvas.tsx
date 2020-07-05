@@ -1,4 +1,12 @@
-import React, { useState, useEffect, useCallback, useRef } from "react";
+import React, {
+  useState,
+  useEffect,
+  useCallback,
+  useRef,
+  CSSProperties,
+} from "react";
+import { Iconfont } from "../iconfont";
+import { CSSTransition } from "react-transition-group";
 import "./canvas.scss";
 
 // canvans props
@@ -14,6 +22,7 @@ type Coordinate = {
 };
 
 const Canvas = ({ width, height }: CanvasProps) => {
+  //--------------------- Canvas 画板 -----------------
   // 钩 canvas
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
@@ -147,8 +156,82 @@ const Canvas = ({ width, height }: CanvasProps) => {
     };
   }, [exitPaint]);
 
-  // canvas 画板
-  return <canvas ref={canvasRef} height={height} width={width} />;
+  //--------------------- tools 工具栏 -----------------
+
+  // 画板开关状态
+  const [isToolboxOpen, setIsToolboxOpen] = useState(true);
+
+  // 画板开关 点击事件
+  const toolboxOpenClick = useCallback(() => {
+    setIsToolboxOpen(!isToolboxOpen);
+    console.log(isToolboxOpen);
+  }, [isToolboxOpen]);
+
+  // tools 画笔/橡皮
+  const [toolsMap] = useState<string[]>(["huabi", "xiangpi"]);
+  const [eraserEnabled, setEraserEnabled] = useState(false);
+  const onToolsClick = useCallback(([e, tool]) => {
+    tool === "xiangpi" ? setEraserEnabled(true) : setEraserEnabled(false);
+  }, []);
+
+  // html
+  return (
+    <>
+      <canvas ref={canvasRef} height={height} width={width} />
+      <div
+        id="toolbox-open"
+        style={
+          {
+            borderRadius: isToolboxOpen ? null : 5,
+          } as CSSProperties
+        }
+      >
+        <Iconfont
+          type={isToolboxOpen ? "icon-zhankai" : "icon-shouqi"}
+          style={{
+            width: "100%",
+            fontSize: 32,
+          }}
+          clickEvent={toolboxOpenClick}
+        />
+      </div>
+      <CSSTransition
+        in={isToolboxOpen} //用于判断是否出现的状态
+        timeout={300} //动画持续时间
+        classNames="toolbox" //className值，防止重复
+        unmountOnExit
+      >
+        <div id="toolbox">
+          <span>Options</span>
+          <div className="options">...</div>
+          <span>Toolbox</span>
+          <div className="tools">
+            {toolsMap.map((tool, index) => {
+              return (
+                <Iconfont
+                  key={index + tool}
+                  className={
+                    tool === "xiangpi"
+                      ? eraserEnabled
+                        ? "active"
+                        : ""
+                      : !eraserEnabled
+                      ? "active"
+                      : ""
+                  }
+                  type={"icon-" + tool}
+                  style={{ fontSize: 50 }}
+                  clickEvent={(e) => onToolsClick([e, tool])}
+                />
+              );
+            })}
+          </div>
+          <div className="sizes">...</div>
+          <ol className="colors">...</ol>
+        </div>
+      </CSSTransition>
+    </>
+  );
 };
 
 // canvas 默认属性
