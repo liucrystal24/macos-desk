@@ -5,8 +5,10 @@ import React, {
   useRef,
   CSSProperties,
 } from "react";
+import moment from "moment";
 import { Iconfont } from "../iconfont";
 import { CSSTransition } from "react-transition-group";
+// import { useDialog } from "../dialog";
 import "./canvas.scss";
 
 // canvans props
@@ -29,7 +31,7 @@ interface ClearArcOptions {
 }
 
 const Canvas = ({ width, height }: CanvasProps) => {
-  //--------------------- Canvas 画板 -----------------
+  //--------------------- Canvas 画板 State -----------------
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
   // 是否在画
@@ -40,14 +42,14 @@ const Canvas = ({ width, height }: CanvasProps) => {
     undefined
   );
 
-  //--------------------- tools 工具栏 -----------------
+  //--------------------- tools 工具栏 State -----------------
 
   // tools 画笔/橡皮 选择
-  const [toolsMap] = useState<string[]>(["huabi", "xiangpi"]);
+  const [toolsMap] = useState<string[]>(["pen", "eraser"]);
   const [eraserEnabled, setEraserEnabled] = useState(false);
   const onToolsClick = useCallback(([e, tool]) => {
     // 这里逻辑不同，后续查看
-    tool === "xiangpi" ? setEraserEnabled(true) : setEraserEnabled(false);
+    tool === "eraser" ? setEraserEnabled(true) : setEraserEnabled(false);
   }, []);
 
   // 画板开关状态
@@ -58,7 +60,20 @@ const Canvas = ({ width, height }: CanvasProps) => {
   const [strokeStyle, setStrokeStyle] = useState("black");
   const [colorMap] = useState<string[]>(["black", "red", "yellow", "blue"]);
 
-  //-------------------- canvas 画板 -------------------
+  // back,next
+  const backRef = useRef<SVGSVGElement>(null);
+  const nextRef = useRef<SVGSVGElement>(null);
+
+  // 保存，删除，前进，后退
+  const optionsMap = ["save", "delete", "turn_back", "turn_next"];
+
+  // 前进，后退步数
+  const [step, setStep] = useState(-1);
+  const [canvasHistory, setCanvasHistory] = useState<string[]>([]);
+
+  // const { openDialog, closeDialog, RenderDialog } = useDialog();
+
+  //-------------------- canvas 画板 Function -------------------
 
   // 获取距离最外层的高度
   const getOffset = useCallback(
@@ -100,12 +115,7 @@ const Canvas = ({ width, height }: CanvasProps) => {
     const canvas: HTMLCanvasElement = canvasRef.current;
     const context = canvas.getContext("2d");
     if (context) {
-      // 判断是否是 清除状态
-      // if (eraserEnabled) {
-      // context.strokeStyle = "white";
-      // } else {
       context.strokeStyle = strokeStyle;
-      // }
       context.lineJoin = "round";
       context.lineWidth = lineWidth;
 
@@ -145,6 +155,7 @@ const Canvas = ({ width, height }: CanvasProps) => {
     }
   }, []);
 
+  // 圆形橡皮 x,y,r
   const clearArcFun = useCallback(
     ({ x, y, r }: ClearArcOptions) => {
       if (!canvasRef.current) {
@@ -227,7 +238,7 @@ const Canvas = ({ width, height }: CanvasProps) => {
     };
   }, [exitPaint]);
 
-  //--------------------- tools 工具栏 -----------------
+  //--------------------- tools 工具栏 Function ----------------
 
   // 画板开关 点击事件
   const toolboxOpenClick = useCallback(() => {
@@ -235,10 +246,12 @@ const Canvas = ({ width, height }: CanvasProps) => {
     console.log(isToolboxOpen);
   }, [isToolboxOpen]);
 
+  // 画笔宽度
   const onSizesChange = useCallback((e) => {
     setLineWidth(e.target.value);
   }, []);
 
+  // 常见颜色选择
   const onColorsClick = useCallback((e, selector, color) => {
     setStrokeStyle(color);
   }, []);
@@ -247,6 +260,103 @@ const Canvas = ({ width, height }: CanvasProps) => {
   const onColorsChange = useCallback((e) => {
     setStrokeStyle(e.target.value);
   }, []);
+
+  // 保存 canvas
+  const saveCanvas = useCallback(() => {
+    if (!canvasRef.current) {
+      return;
+    }
+    const canvas: HTMLCanvasElement = canvasRef.current;
+    const context = canvas.getContext("2d");
+    if (context) {
+      // 用于记录当前 context.globalCompositeOperation ——（合成或混合模式）
+      const compositeOperation = context.globalCompositeOperation;
+      // 设置为 “在现有的画布内容后面绘制新的图形”
+      context.globalCompositeOperation = "destination-over";
+      context.fillStyle = "#fff";
+      context.fillRect(0, 0, width, height);
+      const imageData = canvas.toDataURL("image/png");
+      // 将数据从已有的 ImageData 对象绘制到位图
+      context.putImageData(context.getImageData(0, 0, width, height), 0, 0);
+      // 复原 context.globalCompositeOperation
+      context.globalCompositeOperation = compositeOperation;
+      // 下载
+      const a = document.createElement("a");
+      document.body.appendChild(a);
+      a.href = imageData;
+      const dateNow = moment().format("YYYY-MM-DD HH-mm-ss");
+      a.download = "myPaint " + dateNow;
+      a.target = "_blank";
+      console.log("myPainting " + dateNow);
+      a.click();
+    }
+  }, [width, height]);
+
+  // 后退、前进
+  const changeCanvas = useCallback(
+    (type) => {
+      if (!canvasRef.current || !backRef.current || !nextRef.current) {
+        return;
+      }
+      const canvas: HTMLCanvasElement = canvasRef.current;
+      const context = canvas.getContext("2d");
+      const back: SVGSVGElement = backRef.current;
+      const next: SVGSVGElement = nextRef.current;
+      if (context) {
+        let currentStep = -1;
+        if (type === "back" && step >= 0) {
+          currentStep = step - 1;
+          next.classList.add("active");
+          if (currentStep < 0) {
+            back.classList.remove("active");
+          }
+        } else if (type === "next" && step < canvasHistory.length - 1) {
+          currentStep = step + 1;
+          back.classList.add("active");
+          if (currentStep === canvasHistory.length - 1) {
+            next.classList.remove("active");
+          }
+        } else {
+          return;
+        }
+        context.clearRect(0, 0, width, height);
+        const canvasPic = new Image();
+        canvasPic.src = canvasHistory[currentStep];
+        canvasPic.addEventListener("load", () => {
+          context.drawImage(canvasPic, 0, 0);
+        });
+        setStep(currentStep);
+      }
+    },
+    [height, width, step, canvasHistory]
+  );
+
+  // 清空画布
+  const checkClearDialog = useCallback((e) => {
+    console.log("清空");
+  }, []);
+
+  // 保存、清空、后退、前进
+  const onOptionsClick = useCallback(
+    (el, toolName) => {
+      switch (toolName) {
+        case "delete":
+          // setClearDialogOpen(true);
+          checkClearDialog(el);
+          break;
+        case "save":
+          saveCanvas();
+          break;
+        case "turn_back":
+          changeCanvas("back");
+          break;
+        case "turn_next":
+          changeCanvas("next");
+          break;
+      }
+    },
+    [checkClearDialog, saveCanvas, changeCanvas]
+  );
 
   return (
     <>
@@ -260,7 +370,7 @@ const Canvas = ({ width, height }: CanvasProps) => {
         }
       >
         <Iconfont
-          type={isToolboxOpen ? "icon-zhankai" : "icon-shouqi"}
+          type={isToolboxOpen ? "icon-turn_down" : "icon-turn_up"}
           style={{
             width: "100%",
             fontSize: 32,
@@ -276,7 +386,26 @@ const Canvas = ({ width, height }: CanvasProps) => {
       >
         <div id="toolbox" /* 画笔/橡皮 */>
           <span>Options</span>
-          <div className="options">...</div>
+          <div className="options">
+            {optionsMap.map((option, index) => {
+              return (
+                <Iconfont
+                  svgRef={
+                    option === "turn_back"
+                      ? backRef
+                      : option === "turn_next"
+                      ? nextRef
+                      : undefined
+                  }
+                  key={index + option}
+                  type={"icon-" + option}
+                  className={option}
+                  style={{ fontSize: 50 }}
+                  clickEvent={(el) => onOptionsClick(el, option)}
+                />
+              );
+            })}
+          </div>
           <span>Toolbox</span>
           <div className="tools">
             {toolsMap.map((tool, index) => {
@@ -284,7 +413,7 @@ const Canvas = ({ width, height }: CanvasProps) => {
                 <Iconfont
                   key={index + tool}
                   className={
-                    tool === "xiangpi"
+                    tool === "eraser"
                       ? eraserEnabled
                         ? "active"
                         : ""
@@ -334,6 +463,16 @@ const Canvas = ({ width, height }: CanvasProps) => {
           </ol>
         </div>
       </CSSTransition>
+      {/* <RenderDialog
+        width={300}
+        height={120}
+        id="clear-dialog"
+        title="您确定要清空该画布吗？"
+        message="一旦清空将无法撤回。"
+        imgSrc={"Drawing.png"}
+        onCheck={checkClearDialog}
+        onClose={closeClearDialog}
+      /> */}
     </>
   );
 };
