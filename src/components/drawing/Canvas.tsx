@@ -21,9 +21,15 @@ type Coordinate = {
   y: number;
 };
 
+// 清除圆形区域
+interface ClearArcOptions {
+  x: number;
+  y: number;
+  r: number;
+}
+
 const Canvas = ({ width, height }: CanvasProps) => {
   //--------------------- Canvas 画板 -----------------
-  // 钩 canvas
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
   // 是否在画
@@ -34,6 +40,26 @@ const Canvas = ({ width, height }: CanvasProps) => {
     undefined
   );
 
+  //--------------------- tools 工具栏 -----------------
+
+  // tools 画笔/橡皮 选择
+  const [toolsMap] = useState<string[]>(["huabi", "xiangpi"]);
+  const [eraserEnabled, setEraserEnabled] = useState(false);
+  const onToolsClick = useCallback(([e, tool]) => {
+    // 这里逻辑不同，后续查看
+    tool === "xiangpi" ? setEraserEnabled(true) : setEraserEnabled(false);
+  }, []);
+
+  // 画板开关状态
+  const [isToolboxOpen, setIsToolboxOpen] = useState(true);
+  // 画笔 宽度
+  const [lineWidth, setLineWidth] = useState(5);
+  // 画笔 颜色
+  const [strokeStyle, setStrokeStyle] = useState("black");
+  const [colorMap] = useState<string[]>(["black", "red", "yellow", "blue"]);
+
+  //-------------------- canvas 画板 -------------------
+
   // 获取距离最外层的高度
   const getOffset = useCallback(
     (el: HTMLElement, offsetStyle: "top" | "left"): number => {
@@ -41,7 +67,7 @@ const Canvas = ({ width, height }: CanvasProps) => {
       if (el.offsetParent === null) {
         return OffsetNum;
       }
-      console.log(el, OffsetNum);
+      // console.log(el, OffsetNum);
       return OffsetNum + getOffset(el.offsetParent as HTMLElement, offsetStyle);
     },
     []
@@ -54,9 +80,10 @@ const Canvas = ({ width, height }: CanvasProps) => {
         return;
       }
       const canvas: HTMLCanvasElement = canvasRef.current;
+      // event.offsetX
+      // event.offsetY
       const x = event.pageX - getOffset(canvas, "left");
       const y = event.pageY - getOffset(canvas, "top");
-      // console.log(x, y);
       return { x, y };
     },
     [getOffset]
@@ -73,9 +100,14 @@ const Canvas = ({ width, height }: CanvasProps) => {
     const canvas: HTMLCanvasElement = canvasRef.current;
     const context = canvas.getContext("2d");
     if (context) {
-      context.strokeStyle = "red";
+      // 判断是否是 清除状态
+      // if (eraserEnabled) {
+      // context.strokeStyle = "white";
+      // } else {
+      context.strokeStyle = strokeStyle;
+      // }
       context.lineJoin = "round";
-      context.lineWidth = 5;
+      context.lineWidth = lineWidth;
 
       context.beginPath();
       context.moveTo(originalMousePosition.x, originalMousePosition.y);
@@ -87,16 +119,45 @@ const Canvas = ({ width, height }: CanvasProps) => {
   };
 
   // 修改状态，开始作画
-  const startPaint = useCallback(
-    (event: MouseEvent) => {
-      const coordinates = getCoordinates(event);
-      if (coordinates) {
-        console.log("---startPaint---");
-        setIsPainting(true);
-        setMousePosition(coordinates);
+  const startPaint = useCallback((event: MouseEvent) => {
+    const coordinates = getCoordinates(event);
+    if (coordinates) {
+      setIsPainting(true);
+      setMousePosition(coordinates);
+    }
+  }, []);
+
+  // 清除圆形区域
+  const clearArc = useCallback((x, y, radius, ctx, stepClear) => {
+    var calcWidth = radius - stepClear;
+    var calcHeight = Math.sqrt(radius * radius - calcWidth * calcWidth);
+
+    var posX = x - calcWidth;
+    var posY = y - calcHeight;
+
+    var widthX = 2 * calcWidth;
+    var heightY = 2 * calcHeight;
+
+    if (stepClear <= radius) {
+      ctx.clearRect(posX, posY, widthX, heightY);
+      stepClear += 1;
+      clearArc(x, y, radius, ctx, stepClear);
+    }
+  }, []);
+
+  const clearArcFun = useCallback(
+    ({ x, y, r }: ClearArcOptions) => {
+      if (!canvasRef.current) {
+        return;
+      }
+      const canvas: HTMLCanvasElement = canvasRef.current;
+      const context = canvas.getContext("2d");
+      if (context) {
+        var stepClear = 1;
+        clearArc(x, y, r, context, stepClear);
       }
     },
-    [getCoordinates]
+    [clearArc]
   );
 
   // 作画，并保存 新位置
@@ -105,17 +166,27 @@ const Canvas = ({ width, height }: CanvasProps) => {
       if (isPainting) {
         const newMousePosition = getCoordinates(event);
         if (mousePosition && newMousePosition) {
-          drawLine(mousePosition, newMousePosition);
-          setMousePosition(newMousePosition);
+          if (eraserEnabled) {
+            const newr = Number(lineWidth / 2);
+            clearArcFun({
+              x: newMousePosition.x,
+              y: newMousePosition.y,
+              r: newr,
+            });
+          } else {
+            drawLine(mousePosition, newMousePosition);
+            setMousePosition(newMousePosition);
+          }
         }
       }
     },
-    [isPainting, mousePosition, getCoordinates]
+    [isPainting, eraserEnabled, mousePosition, lineWidth, drawLine, clearArcFun]
   );
 
   // 修改作画状态
   const exitPaint = useCallback(() => {
     setIsPainting(false);
+    setMousePosition(undefined);
   }, []);
 
   // 按下鼠标，修改状态，开始作画
@@ -158,23 +229,25 @@ const Canvas = ({ width, height }: CanvasProps) => {
 
   //--------------------- tools 工具栏 -----------------
 
-  // 画板开关状态
-  const [isToolboxOpen, setIsToolboxOpen] = useState(true);
-
   // 画板开关 点击事件
   const toolboxOpenClick = useCallback(() => {
     setIsToolboxOpen(!isToolboxOpen);
     console.log(isToolboxOpen);
   }, [isToolboxOpen]);
 
-  // tools 画笔/橡皮
-  const [toolsMap] = useState<string[]>(["huabi", "xiangpi"]);
-  const [eraserEnabled, setEraserEnabled] = useState(false);
-  const onToolsClick = useCallback(([e, tool]) => {
-    tool === "xiangpi" ? setEraserEnabled(true) : setEraserEnabled(false);
+  const onSizesChange = useCallback((e) => {
+    setLineWidth(e.target.value);
   }, []);
 
-  // html
+  const onColorsClick = useCallback((e, selector, color) => {
+    setStrokeStyle(color);
+  }, []);
+
+  // 调色盘
+  const onColorsChange = useCallback((e) => {
+    setStrokeStyle(e.target.value);
+  }, []);
+
   return (
     <>
       <canvas ref={canvasRef} height={height} width={width} />
@@ -196,12 +269,12 @@ const Canvas = ({ width, height }: CanvasProps) => {
         />
       </div>
       <CSSTransition
-        in={isToolboxOpen} //用于判断是否出现的状态
-        timeout={300} //动画持续时间
-        classNames="toolbox" //className值，防止重复
+        in={isToolboxOpen}
+        timeout={300}
+        classNames="toolbox"
         unmountOnExit
       >
-        <div id="toolbox">
+        <div id="toolbox" /* 画笔/橡皮 */>
           <span>Options</span>
           <div className="options">...</div>
           <span>Toolbox</span>
@@ -226,8 +299,39 @@ const Canvas = ({ width, height }: CanvasProps) => {
               );
             })}
           </div>
-          <div className="sizes">...</div>
-          <ol className="colors">...</ol>
+          <div className="sizes" /* 画笔粗细*/>
+            <input
+              style={
+                {
+                  backgroundColor: eraserEnabled ? "#ebeff4" : strokeStyle,
+                } as CSSProperties
+              }
+              type="range"
+              id="range"
+              name="range"
+              min="1"
+              max="20"
+              value={lineWidth}
+              onChange={onSizesChange}
+            />
+          </div>
+          <ol className="colors" /* 常用颜色选择 */>
+            {colorMap.map((color, index) => {
+              return (
+                <li
+                  key={index + color}
+                  className={color === strokeStyle ? color + " active" : color}
+                  onClick={(e) => onColorsClick(e, "li", color)}
+                ></li>
+              );
+            })}
+            <input
+              type="color" // 调色盘
+              value={strokeStyle}
+              onChange={onColorsChange}
+              id="currentColor"
+            />
+          </ol>
         </div>
       </CSSTransition>
     </>

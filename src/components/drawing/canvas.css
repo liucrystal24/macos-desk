@@ -118,8 +118,8 @@ canvas {
   background: red;
 }
 
-#toolbox .colors li.green {
-  background: green;
+#toolbox .colors li.yellow {
+  background: yellow;
 }
 
 #toolbox .colors li.blue {
