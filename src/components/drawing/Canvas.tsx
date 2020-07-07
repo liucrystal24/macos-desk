@@ -8,7 +8,8 @@ import React, {
 import moment from "moment";
 import { Iconfont } from "../iconfont";
 import { CSSTransition } from "react-transition-group";
-// import { useDialog } from "../dialog";
+// 弹出框
+import { useDialog } from "../dialog/index";
 import "./canvas.scss";
 
 // canvans props
@@ -28,6 +29,14 @@ interface ClearArcOptions {
   x: number;
   y: number;
   r: number;
+}
+
+// 清除矩形区域
+interface ClearRectOptions {
+  x: number;
+  y: number;
+  width: number;
+  height: number;
 }
 
 const Canvas = ({ width, height }: CanvasProps) => {
@@ -71,7 +80,14 @@ const Canvas = ({ width, height }: CanvasProps) => {
   const [step, setStep] = useState(-1);
   const [canvasHistory, setCanvasHistory] = useState<string[]>([]);
 
-  // const { openDialog, closeDialog, RenderDialog } = useDialog();
+  // ------------------弹框 modal-----------------------
+  const { openDialog, closeDialog, RenderDialog } = useDialog();
+  const [isClearDialogOpen, setClearDialogOpen] = useState(false);
+  // 控制弹框
+  useEffect(isClearDialogOpen ? openDialog : closeDialog, [isClearDialogOpen]);
+  const closeClearDialog = useCallback(() => {
+    setClearDialogOpen(false);
+  }, []);
 
   //-------------------- canvas 画板 Function -------------------
 
@@ -128,15 +144,6 @@ const Canvas = ({ width, height }: CanvasProps) => {
     }
   };
 
-  // 修改状态，开始作画
-  const startPaint = useCallback((event: MouseEvent) => {
-    const coordinates = getCoordinates(event);
-    if (coordinates) {
-      setIsPainting(true);
-      setMousePosition(coordinates);
-    }
-  }, []);
-
   // 清除圆形区域
   const clearArc = useCallback((x, y, radius, ctx, stepClear) => {
     var calcWidth = radius - stepClear;
@@ -155,6 +162,18 @@ const Canvas = ({ width, height }: CanvasProps) => {
     }
   }, []);
 
+  // 清除矩形区域
+  const clearRect = useCallback(({ x, y, width, height }: ClearRectOptions) => {
+    if (!canvasRef.current) {
+      return;
+    }
+    const canvas: HTMLCanvasElement = canvasRef.current;
+    const context = canvas.getContext("2d");
+    if (context) {
+      context.clearRect(x, y, width, height);
+    }
+  }, []);
+
   // 圆形橡皮 x,y,r
   const clearArcFun = useCallback(
     ({ x, y, r }: ClearArcOptions) => {
@@ -170,6 +189,15 @@ const Canvas = ({ width, height }: CanvasProps) => {
     },
     [clearArc]
   );
+
+  // 修改状态，开始作画
+  const startPaint = useCallback((event: MouseEvent) => {
+    const coordinates = getCoordinates(event);
+    if (coordinates) {
+      setIsPainting(true);
+      setMousePosition(coordinates);
+    }
+  }, []);
 
   // 作画，并保存 新位置
   const paint = useCallback(
@@ -194,49 +222,57 @@ const Canvas = ({ width, height }: CanvasProps) => {
     [isPainting, eraserEnabled, mousePosition, lineWidth, drawLine, clearArcFun]
   );
 
+  // 保存当前画板状态(mouseup & mouseleave)
+  const saveFragment = useCallback(() => {
+    setStep(step + 1);
+    if (!canvasRef.current) {
+      return;
+    }
+    const canvas: HTMLCanvasElement = canvasRef.current;
+    canvasHistory.push(canvas.toDataURL());
+    setCanvasHistory(canvasHistory);
+
+    if (!backRef.current || !nextRef.current) {
+      return;
+    }
+    const back: SVGSVGElement = backRef.current;
+    const next: SVGSVGElement = nextRef.current;
+    back.classList.add("active");
+    next.classList.remove("active");
+  }, [step, canvasHistory]);
+
   // 修改作画状态
   const exitPaint = useCallback(() => {
     setIsPainting(false);
     setMousePosition(undefined);
+    saveFragment();
+  }, [saveFragment]);
+
+  const leaveCanvas = useCallback(() => {
+    setIsPainting(false);
+    setMousePosition(undefined);
   }, []);
 
-  // 按下鼠标，修改状态，开始作画
   useEffect(() => {
     if (!canvasRef.current) {
       return;
     }
     const canvas: HTMLCanvasElement = canvasRef.current;
+    // 按下鼠标，修改状态，开始作画
     canvas.addEventListener("mousedown", startPaint);
+    // 鼠标移动，跟踪轨迹
+    canvas.addEventListener("mousemove", paint);
+    // 鼠标松开，停止作画(有保存状态)
+    canvas.addEventListener("mouseup", exitPaint);
+    // 鼠标离开，停止作画(无保存状态)
+    canvas.addEventListener("mouseleave", leaveCanvas);
     return () => {
       canvas.removeEventListener("mousedown", startPaint);
-    };
-  }, [startPaint]);
-
-  // 鼠标移动，跟踪轨迹
-  useEffect(() => {
-    if (!canvasRef.current) {
-      return;
-    }
-    const canvas: HTMLCanvasElement = canvasRef.current;
-    canvas.addEventListener("mousemove", paint);
-    return () => {
       canvas.removeEventListener("mousemove", paint);
-    };
-  }, [paint]);
-
-  // 鼠标送，或离开画板，停止作画
-  useEffect(() => {
-    if (!canvasRef.current) {
-      return;
-    }
-    const canvas: HTMLCanvasElement = canvasRef.current;
-    canvas.addEventListener("mouseup", exitPaint);
-    canvas.addEventListener("mouseleave", exitPaint);
-    return () => {
       canvas.removeEventListener("mouseup", exitPaint);
-      canvas.removeEventListener("mouseleave", exitPaint);
+      canvas.removeEventListener("mouseleave", leaveCanvas);
     };
-  }, [exitPaint]);
+  }, [startPaint, paint, exitPaint, leaveCanvas]);
 
   //--------------------- tools 工具栏 Function ----------------
 
@@ -284,7 +320,7 @@ const Canvas = ({ width, height }: CanvasProps) => {
       const a = document.createElement("a");
       document.body.appendChild(a);
       a.href = imageData;
-      const dateNow = moment().format("YYYY-MM-DD HH-mm-ss");
+      const dateNow = moment().format("YYYY-MM-DD HHmmss");
       a.download = "myPaint " + dateNow;
       a.target = "_blank";
       console.log("myPainting " + dateNow);
@@ -332,17 +368,34 @@ const Canvas = ({ width, height }: CanvasProps) => {
   );
 
   // 清空画布
-  const checkClearDialog = useCallback((e) => {
-    console.log("清空");
-  }, []);
+  const checkClearDialog = useCallback(
+    (e) => {
+      clearRect({
+        x: 0,
+        y: 0,
+        width,
+        height,
+      });
+      setCanvasHistory([]);
+      setStep(-1);
+      closeClearDialog();
+      if (!backRef.current || !nextRef.current) {
+        return;
+      }
+      const back: SVGSVGElement = backRef.current;
+      const go: SVGSVGElement = nextRef.current;
+      back.classList.remove("active");
+      go.classList.remove("active");
+    },
+    [closeClearDialog, clearRect, width, height]
+  );
 
   // 保存、清空、后退、前进
   const onOptionsClick = useCallback(
     (el, toolName) => {
       switch (toolName) {
         case "delete":
-          // setClearDialogOpen(true);
-          checkClearDialog(el);
+          setClearDialogOpen(true);
           break;
         case "save":
           saveCanvas();
@@ -463,7 +516,7 @@ const Canvas = ({ width, height }: CanvasProps) => {
           </ol>
         </div>
       </CSSTransition>
-      {/* <RenderDialog
+      <RenderDialog
         width={300}
         height={120}
         id="clear-dialog"
@@ -472,7 +525,7 @@ const Canvas = ({ width, height }: CanvasProps) => {
         imgSrc={"Drawing.png"}
         onCheck={checkClearDialog}
         onClose={closeClearDialog}
-      /> */}
+      />
     </>
   );
 };
