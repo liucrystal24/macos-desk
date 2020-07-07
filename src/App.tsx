@@ -1,5 +1,5 @@
 import React from "react";
-import { Docker } from "./components/footer/Docker";
+import { Footer } from "./components/footer/Footer";
 import { Canvas } from "./components/drawing/Canvas";
 import "./App.scss";
 
@@ -10,7 +10,7 @@ function App() {
         <Canvas></Canvas>
       </div>
       <footer>
-        <Docker></Docker>
+        <Footer></Footer>
       </footer>
     </div>
   );

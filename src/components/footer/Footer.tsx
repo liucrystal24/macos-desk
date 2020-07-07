@@ -1,6 +1,22 @@
-import React, { useState, useEffect, useRef, useCallback } from "react";
+import React, {
+  useState,
+  useEffect,
+  useRef,
+  useCallback,
+  createContext,
+} from "react";
 
-export const Docker = () => {
+// 加载 drawing
+import { Drawing } from "../drawing";
+
+export const FooterContext = createContext<any>([]);
+
+interface OpenTypes {
+  type: boolean;
+  index?: number;
+}
+
+export const Footer = () => {
   // docker 图标默认宽度
   const [defaultWidth] = useState(76);
   // dockDiv
@@ -17,6 +33,15 @@ export const Docker = () => {
   ]);
   // docker 图标 放大系数
   const [scaleNum] = useState(2);
+
+  // drawing 打开
+  const [isDrawingOpen, setDrawingOpen] = useState<OpenTypes>({
+    type: false,
+    index: 6,
+  });
+
+  // drawing 最小化
+  const [isDrawingShow, setDrawingShow] = useState(true);
 
   // dockerRef 距离<html>内边距(div->footer + footer-> html)
   const getDockerOffset = useCallback(
@@ -97,10 +122,19 @@ export const Docker = () => {
   }, [mouseMove, mouseLeave]);
 
   return (
-    <div ref={dockerRef} style={{ height: defaultWidth }}>
-      {dockList.map((item, index) => {
-        return <img src={require("../../img/" + item)} key={index} alt={item} />;
-      })}
-    </div>
+    <>
+      <FooterContext.Provider
+        value={[isDrawingOpen, setDrawingOpen, isDrawingShow, setDrawingShow]}
+      >
+        <Drawing />
+      </FooterContext.Provider>
+      <div ref={dockerRef} style={{ height: defaultWidth }}>
+        {dockList.map((item, index) => {
+          return (
+            <img src={require("../../img/" + item)} key={index} alt={item} />
+          );
+        })}
+      </div>
+    </>
   );
 };
