@@ -4,10 +4,14 @@ import React, {
   useRef,
   useCallback,
   createContext,
+  CSSProperties,
 } from "react";
 
 // 加载 drawing
 import { Drawing } from "../drawing";
+import "./index.scss";
+
+// import { addListener } from "cluster";
 
 export const FooterContext = createContext<any>([]);
 
@@ -65,8 +69,8 @@ export const Footer = () => {
     console.log("leave");
     const imgList = dockerRef.current.childNodes;
     for (let i = 0; i < imgList.length; i++) {
-      const img = imgList[i] as HTMLImageElement;
-      img.width = defaultWidth;
+      const img = imgList[i] as HTMLDivElement;
+      img.style.width = img.style.height = defaultWidth + "px";
     }
   }, [defaultWidth]);
 
@@ -83,7 +87,7 @@ export const Footer = () => {
       }
       const imgList = dockerRef.current.childNodes;
       for (let i = 0; i < imgList.length; i++) {
-        const img = imgList[i] as HTMLImageElement;
+        const img = imgList[i] as HTMLDivElement;
         // x:点击处距离图标中心的横向距离
         const x = img.offsetLeft + img.offsetWidth / 2 - clientX;
         // y:点击处距离图标中心的纵向距离
@@ -97,10 +101,35 @@ export const Footer = () => {
         if (scaleImg < 0.5) {
           scaleImg = 0.5;
         }
-        img.width = defaultWidth * scaleNum * scaleImg;
+        img.style.width = img.style.height =
+          defaultWidth * scaleNum * scaleImg + "px";
       }
     },
     [getDockerOffset, defaultWidth, scaleNum]
+  );
+
+  const dockItemClick = useCallback(
+    (item, index) => {
+      if (!dockerRef.current) {
+        return;
+      }
+      // const imgList = dockerRef.current.childNodes;
+      // const img = imgList[index] as HTMLDivElement;
+      switch (item) {
+        case "Drawing.png":
+          if (!isDrawingOpen.type) {
+            // img.classList.add("bounce");
+            // setTimeout(() => {
+            setDrawingOpen({ type: !isDrawingOpen.type, index });
+            // img.classList.remove("bounce");
+            // }, 2500);
+            return;
+          }
+          setDrawingShow(!isDrawingShow);
+          return;
+      }
+    },
+    [isDrawingOpen, isDrawingShow]
   );
 
   // 初始化 图标宽度
@@ -128,13 +157,28 @@ export const Footer = () => {
       >
         <Drawing />
       </FooterContext.Provider>
-      <div ref={dockerRef} style={{ height: defaultWidth }}>
-        {dockList.map((item, index) => {
-          return (
-            <img src={require("../../img/" + item)} key={index} alt={item} />
-          );
-        })}
-      </div>
+      <footer id="AppFooter">
+        <div ref={dockerRef} style={{ height: defaultWidth + 10 }} id="Docker">
+          {dockList.map((item, index) => {
+            return (
+              <div
+                id="DockItem"
+                style={
+                  {
+                    backgroundImage:
+                      "url(" + require("../../img/" + item) + ")",
+                    backgroundPosition: "center",
+                    backgroundSize: "cover",
+                    backgroundRepeat: "no-repeat",
+                  } as CSSProperties
+                }
+                key={index + item}
+                onClick={() => dockItemClick(item, index)}
+              />
+            );
+          })}
+        </div>
+      </footer>
     </>
   );
 };

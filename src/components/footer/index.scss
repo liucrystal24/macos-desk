@@ -1,0 +1,240 @@
+@keyframes bottom {
+  from,
+  20%,
+  53%,
+  to {
+    animation-timing-function: cubic-bezier(0.215, 0.61, 0.355, 1);
+    transform: translate3d(0, 0, 0);
+  }
+
+  40%,
+  43% {
+    animation-timing-function: cubic-bezier(0.755, 0.05, 0.855, 0.06);
+    transform: translate3d(0, -35px, 0) scaleY(1.1);
+  }
+
+  70% {
+    animation-timing-function: cubic-bezier(0.755, 0.05, 0.855, 0.06);
+    transform: translate3d(0, -35px, 0) scaleY(1.05);
+  }
+
+  80% {
+    transition-timing-function: cubic-bezier(0.215, 0.61, 0.355, 1);
+    transform: translate3d(0, 0, 0) scaleY(0.95);
+  }
+
+  90% {
+    transform: translate3d(0, -6px, 0) scaleY(1.02);
+  }
+}
+
+@keyframes top {
+  from,
+  20%,
+  53%,
+  to {
+    animation-timing-function: cubic-bezier(0.215, 0.61, 0.355, 1);
+    transform: translate3d(0, 0, 0);
+  }
+
+  40%,
+  43% {
+    animation-timing-function: cubic-bezier(0.755, 0.05, 0.855, 0.06);
+    transform: translate3d(0, 35px, 0) scaleY(1.1);
+  }
+
+  70% {
+    animation-timing-function: cubic-bezier(0.755, 0.05, 0.855, 0.06);
+    transform: translate3d(0, 35px, 0) scaleY(1.05);
+  }
+
+  80% {
+    transition-timing-function: cubic-bezier(0.215, 0.61, 0.355, 1);
+    transform: translate3d(0, 0, 0) scaleY(0.95);
+  }
+
+  90% {
+    transform: translate3d(0, 6px, 0) scaleY(1.02);
+  }
+}
+
+@keyframes left {
+  from,
+  20%,
+  53%,
+  to {
+    animation-timing-function: cubic-bezier(0.215, 0.61, 0.355, 1);
+    transform: translate3d(0, 0, 0);
+  }
+
+  40%,
+  43% {
+    animation-timing-function: cubic-bezier(0.755, 0.05, 0.855, 0.06);
+    transform: translate3d(35px, 0, 0) scaleX(1.1);
+  }
+
+  70% {
+    animation-timing-function: cubic-bezier(0.755, 0.05, 0.855, 0.06);
+    transform: translate3d(35px, 0, 0) scaleX(1.05);
+  }
+
+  80% {
+    transition-timing-function: cubic-bezier(0.215, 0.61, 0.355, 1);
+    transform: translate3d(0, 0, 0) scaleX(0.95);
+  }
+
+  90% {
+    transform: translate3d(6px, 0, 0) scaleX(1.02);
+  }
+}
+
+@keyframes right {
+  from,
+  20%,
+  53%,
+  to {
+    animation-timing-function: cubic-bezier(0.215, 0.61, 0.355, 1);
+    transform: translate3d(0, 0, 0);
+  }
+
+  40%,
+  43% {
+    animation-timing-function: cubic-bezier(0.755, 0.05, 0.855, 0.06);
+    transform: translate3d(-35px, 0, 0) scaleX(1.1);
+  }
+
+  70% {
+    animation-timing-function: cubic-bezier(0.755, 0.05, 0.855, 0.06);
+    transform: translate3d(-35px, 0, 0) scaleX(1.05);
+  }
+
+  80% {
+    transition-timing-function: cubic-bezier(0.215, 0.61, 0.355, 1);
+    transform: translate3d(0, 0, 0) scaleX(0.95);
+  }
+
+  90% {
+    transform: translate3d(-6px, 0, 0) scaleX(1.02);
+  }
+}
+
+#AppFooter {
+  position: fixed;
+  bottom: 0;
+  width: 100vw;
+  display: flex;
+  justify-content: center;
+
+  #Docker {
+    display: flex;
+    align-items: flex-end;
+    padding-bottom: 10px;
+    background-color: rgba(222, 223, 227, 0.7);
+    box-shadow: rgba(0, 0, 0, 0.31) 0px 0px 1px, rgba(0, 0, 0, 0.18) 0px 0px 5px,
+      rgba(0, 0, 0, 0.3) 0px 8px 50px;
+    border-top-left-radius: 0.4rem;
+    border-top-right-radius: 0.4rem;
+
+    &.top {
+      padding: 7px 4px 3px;
+    }
+
+    &.bottom {
+      padding: 3px 4px 7px;
+    }
+
+    &.left {
+      padding: 4px 3px 4px 7px;
+    }
+
+    &.right {
+      padding: 4px 7px 4px 3px;
+    }
+
+    .DockItem {
+      position: relative;
+      display: flex;
+
+      &.active {
+        &::after {
+          content: "●";
+          font-size: 0.1em;
+          position: absolute;
+        }
+      }
+
+      &.top {
+        justify-content: center;
+
+        &.bounce {
+          animation-duration: 2s; /* don't forget to set a duration! */
+          animation-name: top; /* referring directly to the animation's @keyframe declaration */
+        }
+
+        &.active {
+          &::after {
+            top: -13px;
+          }
+        }
+      }
+
+      &.bottom {
+        justify-content: center;
+
+        &.bounce {
+          animation-duration: 2s; /* don't forget to set a duration! */
+          animation-name: bottom; /* referring directly to the animation's @keyframe declaration */
+        }
+
+        &.active {
+          &::after {
+            bottom: -7px;
+          }
+        }
+      }
+
+      @each $member in left, right {
+        &.#{$member} {
+          align-items: center;
+
+          &.bounce {
+            animation-duration: 2s; /* don't forget to set a duration! */
+            animation-name: #{$member}; /* referring directly to the animation's @keyframe declaration */
+          }
+
+          &.active {
+            &::after {
+              #{$member}: -6px;
+            }
+          }
+        }
+      }
+    }
+
+    &.top {
+      align-items: flex-start;
+      border-bottom-left-radius: 0.4rem;
+      border-bottom-right-radius: 0.4rem;
+    }
+
+    &.bottom {
+      align-items: flex-end;
+      border-top-left-radius: 0.4rem;
+      border-top-right-radius: 0.4rem;
+    }
+
+    &.left {
+      flex-direction: column;
+      align-items: flex-start;
+      border-top-right-radius: 0.4rem;
+      border-bottom-right-radius: 0.4rem;
+    }
+
+    &.right {
+      flex-direction: column;
+      align-items: flex-end;
+      border-top-left-radius: 0.4rem;
+      border-bottom-left-radius: 0.4rem;
+    }
+  }
+}

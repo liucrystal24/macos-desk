@@ -532,9 +532,8 @@ const Canvas = ({ width, height }: CanvasProps) => {
 
 // canvas 默认属性
 Canvas.defaultProps = {
-  // ！！添加modal后，检查样式问题，本身是 100% ,最后看下样式问题
-  width: window.innerWidth / 2,
-  height: window.innerHeight / 2,
+  width: window.innerWidth,
+  height: window.innerHeight,
 };
 
 export { Canvas };
