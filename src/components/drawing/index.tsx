@@ -17,7 +17,10 @@ export const Drawing = React.memo(() => {
   const [style, setStyle] = useState({ width: 1200, height: 800 });
   const [isFullscreen, setFullscreen] = useState(false);
 
+  // useModal中 打开 和 关闭 窗口
   useEffect(isDrawingOpen.type ? open : close, [isDrawingOpen]);
+
+  // 最大化
   const maximizeClick = useCallback(() => {
     if (isFullscreen) {
       setStyle({ width: 1200, height: 800 });
@@ -53,7 +56,7 @@ export const Drawing = React.memo(() => {
           onResizeClick={maximizeClick}
         />
         <Canvas
-          height={isFullscreen ? document.body.clientHeight - 32 : style.height}
+          height={isFullscreen ? document.body.clientHeight - 120 : style.height}
           width={isFullscreen ? document.body.clientWidth : style.width}
         />
       </div>
