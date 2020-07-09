@@ -17,6 +17,7 @@ type Props = {
     isShow: boolean;
   };
 };
+// {} 父元素标签传值
 const Draggable = ({ children, domEl, data }: Props) => {
   const dragEl = document.getElementById(data.id) as HTMLDivElement;
   const moveEl = document.getElementById(data.moveId) as HTMLDivElement;
