@@ -17,7 +17,19 @@ type Props = {
     isShow: boolean;
   };
 };
-// {} 父元素标签传值
+/**
+ * 父元素需要传值
+ * {
+    children，
+    domEl：（Modal主体dom），
+    data：{
+      width；height；
+      id：主体dom（Drawing）；
+      moveId：可拖拽部分（TitleBar）;
+      isshow：是否显示
+    }
+  }
+ */
 const Draggable = ({ children, domEl, data }: Props) => {
   const dragEl = document.getElementById(data.id) as HTMLDivElement;
   const moveEl = document.getElementById(data.moveId) as HTMLDivElement;
@@ -39,6 +51,7 @@ const Draggable = ({ children, domEl, data }: Props) => {
     setState((state) => ({
       ...state,
       isDragging: true,
+      // 点击处距离 draggle 边框的距离
       origin: {
         x: clientX - state.position.x,
         y: clientY - state.position.y,
@@ -116,6 +129,7 @@ const Draggable = ({ children, domEl, data }: Props) => {
       left: `${state.position.x}px`,
       top: `${state.position.y}px`,
       zIndex: state.isDragging ? 2 : 1,
+      // 最小化 none，是不是画布就清除了？
       display: data.isShow ? "block" : "none",
       position: "absolute",
     }),
