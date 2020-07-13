@@ -6,8 +6,14 @@ import Modal from "./Modal";
 export const useModal = () => {
   const [isVisible, setIsVisible] = useState(false);
 
-  const open = () => setIsVisible(true);
-  const close = () => setIsVisible(false);
+  const open = () => {
+    setIsVisible(true);
+    console.log("openDrawing");
+  };
+  const close = () => {
+    setIsVisible(false);
+    console.log("closeDrawing");
+  };
 
   const RenderModal = ({
     children,

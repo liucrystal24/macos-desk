@@ -17,10 +17,11 @@ type Props = {
 /**
  * 父元素需要传值
  * {
-    children，
+    children,
+    closeModal,
     data：{
-      width；height；
-      id：主体dom（Drawing）；
+      width;height;
+      id：主体dom（Drawing）;
       moveId：可拖拽部分（TitleBar）;
       isshow：是否显示
     }

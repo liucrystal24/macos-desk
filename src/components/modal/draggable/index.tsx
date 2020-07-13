@@ -40,7 +40,7 @@ const Draggable = ({ children, domEl, data }: Props) => {
         x: data.width === -1 ? 0 : (window.innerWidth - data.width) / 2,
         y: data.height === -1 ? 0 : (window.innerHeight - data.height) / 2,
       };
-  console.log(initPosition);
+  // console.log(initPosition);
   const [state, setState] = useState({
     isDragging: false,
     origin: { x: 0, y: 0 },

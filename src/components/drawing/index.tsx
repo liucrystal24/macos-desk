@@ -17,7 +17,7 @@ export const Drawing = React.memo(() => {
   const [style, setStyle] = useState({ width: 1200, height: 800 });
   const [isFullscreen, setFullscreen] = useState(false);
 
-  // useModal中 打开 和 关闭 窗口
+  // 监听 isDrawingOpen, 打开或关闭 Modal
   useEffect(isDrawingOpen.type ? open : close, [isDrawingOpen]);
 
   // 最大化
@@ -28,6 +28,7 @@ export const Drawing = React.memo(() => {
       setStyle({ width: -1, height: -1 });
     }
     setFullscreen(!isFullscreen);
+    // 需要添加画面保存 ?
   }, [isFullscreen]);
 
   return (
@@ -56,7 +57,10 @@ export const Drawing = React.memo(() => {
           onResizeClick={maximizeClick}
         />
         <Canvas
-          height={isFullscreen ? document.body.clientHeight - 120 : style.height}
+          height={
+            /* 全屏时，canvas高度为屏幕高度减去底下Docker栏高度，否则就按照设置的高度 */
+            isFullscreen ? document.body.clientHeight - 120 : style.height
+          }
           width={isFullscreen ? document.body.clientWidth : style.width}
         />
       </div>
