@@ -146,6 +146,8 @@
   content: "●";
   font-size: 0.1em;
   position: absolute;
+  bottom: -5px;
+  left: 50%;
 }
 
 #AppFooter #Docker .DockItem.top {

@@ -2,12 +2,13 @@ import React, { useContext, useEffect, useState, useCallback } from "react";
 import { useModal } from "../modal/UseModal";
 import { FooterContext } from "../footer/Footer";
 import { TitleBar } from "react-desktop/macOs";
-import { Canvas } from "./Canvas";
+import { UseCanvas } from "./Canvas";
 import "./canvas.scss";
 /// <reference path="react-desktop.d.ts" />
 
 export const Drawing = React.memo(() => {
   const { open, close, RenderModal } = useModal();
+  const { Canvas, canvasHistory, loadPic } = UseCanvas();
   const [
     isDrawingOpen,
     setDrawingOpen,
@@ -51,12 +52,25 @@ export const Drawing = React.memo(() => {
           }}
           onMinimizeClick={() => {
             setDrawingShow(false);
+            console.log("min");
+            console.log(canvasHistory);
           }}
-          onMaximizeClick={maximizeClick}
-          onResizeClick={maximizeClick}
+          // 没起作用？
+          onMaximizeClick={() => {
+            maximizeClick();
+            console.log(canvasHistory);
+          }}
+          onResizeClick={() => {
+            maximizeClick();
+            setTimeout(() => {
+              loadPic();
+            }, 50);
+          }}
         />
         <Canvas
-          height={isFullscreen ? document.body.clientHeight - 120 : style.height}
+          height={
+            isFullscreen ? document.body.clientHeight - 120 : style.height
+          }
           width={isFullscreen ? document.body.clientWidth : style.width}
         />
       </div>

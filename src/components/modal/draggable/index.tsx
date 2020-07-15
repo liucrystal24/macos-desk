@@ -40,7 +40,7 @@ const Draggable = ({ children, domEl, data }: Props) => {
         x: data.width === -1 ? 0 : (window.innerWidth - data.width) / 2,
         y: data.height === -1 ? 0 : (window.innerHeight - data.height) / 2,
       };
-  console.log(initPosition);
+  // console.log(initPosition);
   const [state, setState] = useState({
     isDragging: false,
     origin: { x: 0, y: 0 },
@@ -127,10 +127,10 @@ const Draggable = ({ children, domEl, data }: Props) => {
   const styles = useMemo(
     () => ({
       left: `${state.position.x}px`,
-      top: `${state.position.y}px`,
+      top: data.isShow ? `${state.position.y}px` : "-2000px",
       zIndex: state.isDragging ? 2 : 1,
       // 最小化 none，是不是画布就清除了？
-      display: data.isShow ? "block" : "none",
+      // display: data.isShow ? "block" : "none",
       position: "absolute",
     }),
     [state.isDragging, state.position, data.isShow]

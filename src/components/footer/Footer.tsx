@@ -118,13 +118,17 @@ export const Footer = () => {
       switch (item) {
         case "Drawing.png":
           if (!isDrawingOpen.type) {
-            // img.classList.add("bounce");
+            // 增加小圆点，表示打开
+            // img.classList.add("active");
+            console.dir(item.classList);
+            console.log(item);
             // setTimeout(() => {
             setDrawingOpen({ type: !isDrawingOpen.type, index });
             // img.classList.remove("bounce");
             // }, 2500);
             return;
           }
+          // 最小化,或者显示，只有关闭 x，才真正关闭
           setDrawingShow(!isDrawingShow);
           return;
       }
@@ -137,6 +141,23 @@ export const Footer = () => {
     mouseLeave();
   }, [mouseLeave]);
 
+  // 图标打开时，添加 active
+  useEffect(() => {
+    if (!dockerRef.current) {
+      return;
+    }
+    const imgList = dockerRef.current.childNodes;
+    [isDrawingOpen].forEach((item) => {
+      if (item.index) {
+        const img = imgList[item.index] as HTMLDivElement;
+        !item.type
+          ? img.classList.remove("active")
+          : img.classList.add("active");
+      }
+    });
+  }, [isDrawingOpen]);
+
+  // 绑定事件
   useEffect(() => {
     if (!dockerRef.current) {
       return;
@@ -162,7 +183,12 @@ export const Footer = () => {
           {dockList.map((item, index) => {
             return (
               <div
-                id="DockItem"
+                className={
+                  // 写死 drawing，需要修改
+                  index === 6 && isDrawingOpen.type
+                    ? "DockItem active"
+                    : "DockItem"
+                }
                 style={
                   {
                     backgroundImage:
