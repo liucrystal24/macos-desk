@@ -8,7 +8,7 @@ import React, {
 } from "react";
 
 // 加载 drawing
-import { Drawing } from "../drawing";
+import { UseDrawing } from "../drawing";
 import "./index.scss";
 
 // import { addListener } from "cluster";
@@ -21,6 +21,8 @@ interface OpenTypes {
 }
 
 export const Footer = () => {
+  // ---
+  const { Drawing, loadPic } = UseDrawing();
   // docker 图标默认宽度
   const [defaultWidth] = useState(76);
   // dockDiv
@@ -115,18 +117,22 @@ export const Footer = () => {
       }
       // const imgList = dockerRef.current.childNodes;
       // const img = imgList[index] as HTMLDivElement;
+      // console.log(canvasHistory);
       switch (item) {
         case "Drawing.png":
           if (!isDrawingOpen.type) {
-            // 增加小圆点，表示打开
-            // img.classList.add("active");
-            console.dir(item.classList);
-            console.log(item);
             // setTimeout(() => {
             setDrawingOpen({ type: !isDrawingOpen.type, index });
             // img.classList.remove("bounce");
             // }, 2500);
             return;
+          }
+          if (!isDrawingShow) {
+            setTimeout(() => {
+              // 重新画 CanvasHistory 最后一次
+              // bug: 如果在最小化之前，点击后退，step未保存，再次打开仍然是最后一次
+              loadPic();
+            }, 50);
           }
           // 最小化,或者显示，只有关闭 x，才真正关闭
           setDrawingShow(!isDrawingShow);

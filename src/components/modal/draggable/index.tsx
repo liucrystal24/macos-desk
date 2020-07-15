@@ -59,6 +59,7 @@ const Draggable = ({ children, domEl, data }: Props) => {
     }));
   }, []);
 
+  // 拖拽事件
   const handleMouseMove = useCallback(
     // 边框不出浏览器
     ({ clientX, clientY, target }) => {
@@ -128,6 +129,7 @@ const Draggable = ({ children, domEl, data }: Props) => {
     () => ({
       left: `${state.position.x}px`,
       top: data.isShow ? `${state.position.y}px` : "-2000px",
+      // top: `${state.position.y}px`,
       zIndex: state.isDragging ? 2 : 1,
       // 最小化 none，是不是画布就清除了？
       // display: data.isShow ? "block" : "none",

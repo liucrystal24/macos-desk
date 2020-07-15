@@ -570,6 +570,7 @@ export const UseCanvas = () => {
   return {
     Canvas,
     canvasHistory,
+    setCanvasHistory,
     loadPic,
   };
 };
