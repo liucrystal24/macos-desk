@@ -1,10 +1,16 @@
 ## 前言
 
-现公司的项目的技术栈是 **Vue 2.x** ,自己想通过项目实践更好的学习 **`react hooks`** 语法
+现公司的项目的技术栈是 **Vue 2.x** ，自己想通过项目实践更好的学习 **react hooks** 语法，也正好为学习 **vue3.0** 铺路。最开始想实现 **画板** 和 **计算器** 两个小 demo，后来觉得不如融入到一个项目里，顺其自然的想到放到一个桌面系统中。**macOS** 的动态交互设计的很好，正好又能更好的复习 **CSS3** 的动画效果，于是就决定做一个 **macOS** 桌面。
 
 ## 项目简介
 
+本项目是借鉴 **macOS** UI 设计和动态交互的模拟桌面，内部包含 **画板**、**计算器**、**浏览器** 等小组件。
+
+- Docker 栏动态
+
 ## 项目演示
+
+项目采用 Github actions 自动部署，如果想了解，可以看我这篇文章：[Github actions 自动部署](https://github.com/liucrystal24/Notebook/issues/13)
 
 项目演示地址 : [https://liucrystal24.github.io/macos-desk/](https://liucrystal24.github.io/macos-desk/)
 
@@ -34,7 +40,7 @@ yarn start
 - [x] 画板
   - [x] 弹窗
   - [x] 拖拽窗口
-  - [x] 窗口最大化，最小化
+  - [x] 窗口最大化，最小化 ( **前三项已经单独组件化** )
   - [x] 保存画板
   - [x] 清空画板
   - [x] 画布历史( 撤销、前进 )
