@@ -8,6 +8,21 @@
 
 - Docker 栏动态
 
+  ![docker](record/gif/docker.gif)
+
+- 画板
+
+  - 结构图
+    ![canvasModal](record/canvasModal/canvasModal.png)
+  - 绘画 & 橡皮
+  - 返回 & 前进
+  - 画笔粗细 & 调色盘
+  - 保存 & 清除
+
+- 弹窗
+  - 最小化 & 最大化
+  - 拖拽
+
 ## 项目演示
 
 项目采用 Github actions 自动部署，如果想了解，可以看我这篇文章：[Github actions 自动部署](https://github.com/liucrystal24/Notebook/issues/13)
