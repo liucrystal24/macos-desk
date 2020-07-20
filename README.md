@@ -13,9 +13,17 @@
 - 画板
 
   - 结构图
+
     ![canvasModal](record/canvasModal/canvasModal.png)
+
   - 绘画 & 橡皮
+
+    ![canvasModal](record/gif/write & earaser.gif)
+
   - 返回 & 前进
+
+    ![canvasModal](record/gif/go & back.gif)
+
   - 画笔粗细 & 调色盘
   - 保存 & 清除
 
