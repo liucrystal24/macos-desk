@@ -9,9 +9,9 @@ import "./styles/App.scss";
 function App() {
   return (
     <div className="App">
-      <div id="main-view"></div>
-      <Footer />
-      {/* <HookTest /> */}
+      {/* <div id="main-view"></div> */}
+      {/* <Footer /> */}
+      <HookTest />
     </div>
   );
 }

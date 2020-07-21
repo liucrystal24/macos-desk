@@ -3,5 +3,9 @@ import { shareData } from "./hooktest";
 
 export const Content = () => {
   const [title, contentData] = useContext(shareData);
-  return <div>{contentData}</div>;
+  return (
+    <>
+      <div>{contentData}</div>
+    </>
+  );
 };
