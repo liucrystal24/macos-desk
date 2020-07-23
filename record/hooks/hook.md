@@ -4,6 +4,9 @@
 
 - https://www.jianshu.com/p/76901410645a
 - https://www.ruanyifeng.com/blog/2019/09/react-hooks.html
+- https://zh-hans.reactjs.org/docs/hooks-rules.html
+
+## Hook 规则
 
 1. Hooks 是一些可以让你在函数组件里“钩入” React state 及生命周期等特性的函数。
 2. Hooks 写在函数的最外层，不能写在 if else 条件语句中，来确保 hooks 的执行顺序一致( 附案例 )
