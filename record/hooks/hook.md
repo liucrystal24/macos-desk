@@ -13,34 +13,35 @@
 3. Hooks 只能在 React 的函数组件 和自定义 Hooks 中调用
 4. Hook 是一种复用状态逻辑的方式，它不复用 state 本身。事实上 Hook 的每次调用都有一个完全独立的 state —— 因此你可以在单个组件中多次调用同一个自定义 Hook。
 
-## useState
+## useState ( 状态变量 )
 
 1. 不会把新的 state 和旧的 state 合并，还是替代
 2. 函数退出后，state 中的变量会被 React 保留
 
-## useEffect
+## useEffect ( 订阅、检查数据变化 )
 
 1. react 首次渲染和之后的每次渲染都会调用一遍传给 useEffect 的函数 ( componentDidMount + componentDidUpdate + componentWillUnmount )
 2. 这些函数是异步执行的
 3. 每次组件渲染后都会执行一遍，包括副作用函数返回的这个清理函数也会重新执行一遍
 4. 执行函数；return ()=>{} : 清除时执行( React 会在执行当前 effect 之前对上一个 effect 进行清除 )；[ xx ] : xx 发生变化后，函数才执行( []为空时，只在首次渲染中执行 )；
 
-## useContext 组件间共享状态
+## useContext ( 组件间共享状态 )
+
+1. 当前的 context 值由上层组件中距离当前组件最近的 <MyContext.Provider> 的 value prop 决定。
+2. 父元素 shareData = createContent( ), shareData.Provider 中的 value 属性值 传递给子组件。
+3. 子元素 useContext(shareData);
 
 父 myEle:
 
 ```tsx
 import { Navigator } from "./navigator";
-import { Content } from "./content";
+
 export const shareData = createContent<any>([]);
 
 export const myEle = () => {
-  const [title, setTitle] = useState("Father - title");
-  const [contentData, setContentData] = useState("Father - content");
   return (
-    <shareData.Provider value={[title, contentData]}>
+    <shareData.Provider value={["value1", "value2"]}>
       <Navigator />
-      <Content />
     </shareData.Provider>
   );
 };
@@ -52,18 +53,51 @@ export const myEle = () => {
 import { shareData } from "./myEle";
 
 export const Navigator = () => {
-  const [title, contentData] = useContext(shareData);
-  return <div>{title}</div>;
+  const [value1, value2] = useContext(shareData);
+  return <div>{value1}</div>;
 };
 ```
 
-子 content:
+## useReducer
+
+1. useState 的替代方案。它接收一个形如 (state, action) => newState 的 reducer，并返回当前的 state 以及与其配套的 dispatch 方法。
+2. state 逻辑较复杂且包含多个子值，或者下一个 state 依赖于之前的 state 等使用。
+3. 
 
 ```tsx
-import { shareData } from "./myEle";
-
-export const Content = () => {
-  const [title, contentData] = useContext(shareData);
-  return <div>{contentData}</div>;
+export const Counter = () => {
+  const initialState = { count: 0 };
+  function reducer(state, action) {
+    switch (action.type) {
+      case "increase":
+        return { count: state.count + 1 };
+      case "reduce":
+        return { count: state.count - 1 };
+      default:
+        throw new Error();
+    }
+  }
+  const [state, dispatch] = useReducer(reducer, initialState);
+  return (
+    <>
+      <div>{state.count}</div>
+      <div>
+        <button
+          onClick={() => {
+            dispatch({ type: "increase" });
+          }}
+        >
+          increase
+        </button>
+        <button
+          onClick={() => {
+            dispatch({ type: "reduce" });
+          }}
+        >
+          reduce
+        </button>
+      </div>
+    </>
+  );
 };
 ```

@@ -1,11 +1,7 @@
 import React, { useContext, useEffect, useState, useCallback } from "react";
-import { shareData } from "./hooktest";
+// import { shareData } from "./hooktest";
 
 export const Content = () => {
-  const [title, contentData] = useContext(shareData);
-  return (
-    <>
-      <div>{contentData}</div>
-    </>
-  );
+  // const [title, contentData] = useContext(shareData);
+  return <>{/* <div>{contentData}</div> */}</>;
 };

@@ -1,6 +1,6 @@
 import React from "react";
 import { Footer } from "./components/footer/Footer";
-import { HookTest } from "./hooks/hooktest";
+import { Counter } from "./hooks/hooktest";
 
 // import { UseHeader } from "./components/header/Header";
 // import { Canvas } from "./components/drawing/Canvas";
@@ -11,7 +11,7 @@ function App() {
     <div className="App">
       {/* <div id="main-view"></div> */}
       {/* <Footer /> */}
-      <HookTest />
+      <Counter />
     </div>
   );
 }
