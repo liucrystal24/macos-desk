@@ -22,10 +22,15 @@
 
   - 返回 & 前进
 
-    ![canvasModal](record/gif/go & back.gif)
+    ![canvasModal](record/gif/back & go.gif)
 
   - 画笔粗细 & 调色盘
+
+    ![canvasModal](record/gif/width & color.gif)
+
   - 保存 & 清除
+
+    ![canvasModal](record/gif/save & clear.gif)
 
 - 弹窗
   - 最小化 & 最大化
