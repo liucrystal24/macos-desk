@@ -62,11 +62,12 @@ export const Navigator = () => {
 
 1. useState 的替代方案。它接收一个形如 (state, action) => newState 的 reducer，并返回当前的 state 以及与其配套的 dispatch 方法。
 2. state 逻辑较复杂且包含多个子值，或者下一个 state 依赖于之前的 state 等使用。
-3. 
 
 ```tsx
 export const Counter = () => {
+  // useState 中的初始值
   const initialState = { count: 0 };
+  // reducer 代替 setState 方法 , action 根据传值的不同执行函数
   function reducer(state, action) {
     switch (action.type) {
       case "increase":
@@ -77,6 +78,7 @@ export const Counter = () => {
         throw new Error();
     }
   }
+  // state 数值监听， dispatch : setState 方法
   const [state, dispatch] = useReducer(reducer, initialState);
   return (
     <>
