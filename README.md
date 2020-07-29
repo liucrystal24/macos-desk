@@ -1,6 +1,6 @@
 ## 前言
 
-现公司的项目的技术栈是 **Vue 2.x** ，自己想通过项目实践更好的学习 **react hooks** 语法，也正好为学习 **vue3.0** 铺路。最开始想实现 **画板** 和 **计算器** 两个小 demo，后来觉得不如融入到一个项目里，顺其自然的想到放到一个桌面系统中。**macOS** 的动态交互设计的很好，正好又能更好的复习 **CSS3** 的动画效果，于是就决定做一个 **macOS** 桌面。
+现公司的项目的技术栈是 **vue2.x** ，自己想通过项目实践更好的学习 **react hooks** 语法，也正好为学习 **vue3.0** 铺路。最开始想实现 **画板** 和 **计算器** 两个小 demo，后来觉得不如融入到一个项目里，顺其自然的想到放到一个桌面系统中。**macOS** 的动态交互设计的很好，正好又能更好的复习 **CSS3** 的动画效果，于是就决定做一个 **macOS** 桌面。
 
 ## 项目简介
 
@@ -8,7 +8,7 @@
 
 - Docker 栏动态
 
-  ![docker](record/gif/docker.gif)
+  ![dock](record/gif/docker.gif)
 
 - 画板
 
@@ -33,8 +33,10 @@
     ![canvasModal](record/gif/save & clear.gif)
 
 - 弹窗
-  - 最小化 & 最大化
-  - 拖拽
+
+  - 拖拽 & 最小化 & 最大化
+
+    ![canvasModal](record/gif/draggle & max.gif)
 
 ## 项目演示
 
@@ -44,7 +46,7 @@
 
 ## 项目运行
 
-:warning: 由于涉及 ES6/7 等新属性，node 需要 6.0 以上版本
+:warning: 由于涉及 ES 6/7 等新属性，node 需要 6.0 以上版本
 
 ```bash
 git clone https://github.com/liucrystal24/macos-desk
@@ -58,9 +60,68 @@ yarn start
 
 ## 技术栈
 
-##### React Hooks + TypeScript + ES6/7 + Sass + flex
+##### React Hooks + TypeScript + ES 6/7 + Sass + flex
 
 ## 项目结构
+
+#### src :
+
+```tree
+│  App.css.map
+│  App.test.tsx
+│  App.tsx
+│  index.css
+│  index.css.map
+│  index.scss
+│  index.tsx
+│  react-app-env.d.ts
+│  serviceWorker.ts
+│  setupTests.ts
+│
+├─components
+│  ├─dialog
+│  │      index.tsx
+│  │
+│  ├─drawing
+│  │      canvas.css
+│  │      canvas.min.css
+│  │      canvas.scss
+│  │      Canvas.tsx
+│  │      index.tsx
+│  │
+│  ├─footer
+│  │      Footer.tsx
+│  │      index.css
+│  │      index.min.css
+│  │      index.scss
+│  │
+│  ├─header
+│  │      Header.tsx
+│  │
+│  ├─iconfont
+│  │      index.css
+│  │      index.min.css
+│  │      index.scss
+│  │      index.tsx
+│  │
+│  └─modal
+│      │  Modal.tsx
+│      │  UseModal.tsx
+│      │
+│      └─draggable
+│              index.tsx
+│
+├─img
+│
+└─styles
+        App.css
+        App.min.css
+        App.scss
+        common.css
+        common.min.css
+        common.scss
+
+```
 
 ## 目标功能
 
@@ -79,6 +140,12 @@ yarn start
 - [ ] 计算器
 - [ ] 通用设置
 - [ ] 启动台
-- [ ] 命令行
 
 ## 总结
+
+1. [Dock 栏 macOS 动效原理及实现](http://www.baidu.com)
+2. [画板（一）：绘画和圆形橡皮擦除](http://www.baidu.com)
+3. [画板（二）：画笔宽度和调色盘](http://www.baidu.com)
+4. [画板（三）：画板历史存储：撤销和前进](http://www.baidu.com)
+5. [画板（四）：清空和保存画板](http://www.baidu.com)
+6. [弹窗拖拽和最大化、最小化](http://www.baidu.com)
