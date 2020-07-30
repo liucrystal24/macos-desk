@@ -22,19 +22,24 @@ import React, {
 //     </shareData.Provider>
 //   );
 // };
-export const Counter = () => {
-  const initialState = { count: 0 };
+export const Counter = ({ initialCount }: any) => {
+  // const initialState = { count: 0 };
+  function init(initialCount: any) {
+    return { count: initialCount };
+  }
   function reducer(state: any, action: any) {
     switch (action.type) {
       case "increase":
         return { count: state.count + 1 };
       case "reduce":
         return { count: state.count - 1 };
+      case "reset":
+        return init(action.payload);
       default:
         throw new Error();
     }
   }
-  const [state, dispatch] = useReducer(reducer, initialState);
+  const [state, dispatch] = useReducer(reducer, initialCount, init);
   return (
     <>
       <div>{state.count}</div>
@@ -52,6 +57,13 @@ export const Counter = () => {
           }}
         >
           reduce
+        </button>
+        <button
+          onClick={() => {
+            dispatch({ type: "reset", payload: initialCount });
+          }}
+        >
+          reset
         </button>
       </div>
     </>

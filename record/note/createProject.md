@@ -55,5 +55,104 @@
 
   #### 2. 鼠标事件监听
 
-  1. 结构示意图
-     ![footer 结构示意图](../img/footer.png)
+  - ##### dock 栏结构示意图
+
+  ![footer 结构示意图](../img/footer.png)
+
+  - ##### mousemove 事件
+
+    根据动效原理，监听 mousemove 事件
+
+    ```tsx
+    const mouseMove = useCallback(
+      ({ clientX, clientY }) => {
+        if (!dockerRef.current) {
+          return;
+        }
+        const imgList = dockerRef.current.childNodes;
+        for (let i = 0; i < imgList.length; i++) {
+          const img = imgList[i] as HTMLDivElement;
+          // x:点击处距离图标中心的横向距离
+          const x = img.offsetLeft + img.offsetWidth / 2 - clientX;
+          // y:点击处距离图标中心的纵向距离
+          const y =
+            img.offsetTop +
+            img.offsetHeight / 2 +
+            getDockerOffset(dockerRef.current, "top") -
+            clientY;
+          let scaleImg =
+            1 - Math.sqrt(x * x + y * y) / (imgList.length * defaultWidth);
+          if (scaleImg < 0.5) {
+            scaleImg = 0.5;
+          }
+          // dock 栏图标动态宽度 = dock 栏图标原本宽度 * 放大系数 * （ 1 - 鼠标到图标中心的距离 / dock 栏长度）
+          img.style.width = img.style.height =
+            defaultWidth * scaleNum * scaleImg + "px";
+        }
+      },
+      [getDockerOffset, defaultWidth, scaleNum]
+    );
+    ```
+
+  - ##### getDockerOffset
+
+    获取对象到 body 边缘（ 左 / 顶 ）的距离
+
+    ```tsx
+    const getDockerOffset = useCallback(
+      (el: HTMLElement, offsetStyle: "top" | "left"): number => {
+        const getOffset = offsetStyle === "top" ? el.offsetTop : el.offsetLeft;
+        if (el.offsetParent === null) {
+          return getOffset;
+        }
+        return (
+          getOffset +
+          getDockerOffset(el.offsetParent as HTMLElement, offsetStyle)
+        );
+      },
+      []
+    );
+    ```
+
+  - ##### mouseleave 事件
+
+    鼠标离开 dock 时，图标还原
+
+    ```tsx
+    const mouseLeave = useCallback(() => {
+      if (!dockerRef.current) {
+        return;
+      }
+      console.log("leave");
+      const imgList = dockerRef.current.childNodes;
+      for (let i = 0; i < imgList.length; i++) {
+        const img = imgList[i] as HTMLDivElement;
+        img.style.width = img.style.height = defaultWidth + "px";
+      }
+    }, [defaultWidth]);
+    ```
+
+  - ##### 初始化图标
+
+    ```tsx
+    useEffect(() => {
+      mouseLeave();
+    }, [mouseLeave]);
+    ```
+
+  - ##### 给 dock 绑定事件监听
+
+    ```tsx
+    useEffect(() => {
+      if (!dockerRef.current) {
+        return;
+      }
+      const docker: HTMLDivElement = dockerRef.current;
+      docker.addEventListener("mousemove", mouseMove);
+      docker.addEventListener("mouseleave", mouseLeave);
+      return () => {
+        docker.removeEventListener("mousemove", mouseMove);
+        docker.removeEventListener("mouseleave", mouseLeave);
+      };
+    }, [mouseMove, mouseLeave]);
+    ```
