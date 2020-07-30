@@ -117,7 +117,6 @@ export const UseCanvas = () => {
         if (el.offsetParent === null) {
           return OffsetNum;
         }
-        // console.log(el, OffsetNum);
         return (
           OffsetNum + getOffset(el.offsetParent as HTMLElement, offsetStyle)
         );
