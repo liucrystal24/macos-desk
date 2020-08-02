@@ -18,25 +18,25 @@
 
   - 绘画 & 橡皮
 
-    ![canvasModal](record/gif/write & earaser.gif)
+    ![canvasModal](record/gif/write&earaser.gif)
 
   - 返回 & 前进
 
-    ![canvasModal](record/gif/back & go.gif)
+    ![canvasModal](record/gif/back&go.gif)
 
   - 画笔粗细 & 调色盘
 
-    ![canvasModal](record/gif/width & color.gif)
+    ![canvasModal](record/gif/width&color.gif)
 
   - 保存 & 清除
 
-    ![canvasModal](record/gif/save & clear.gif)
+    ![canvasModal](record/gif/save&clear.gif)
 
 - 弹窗
 
   - 拖拽 & 最小化 & 最大化
 
-    ![canvasModal](record/gif/draggle & max.gif)
+    ![canvasModal](record/gif/draggle&max.gif)
 
 ## 项目演示
 
