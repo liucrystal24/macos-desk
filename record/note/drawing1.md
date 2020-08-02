@@ -120,9 +120,18 @@
       if (isPainting) {
         const newMousePosition = getCoordinates(event);
         if (mousePosition && newMousePosition) {
-          // ... 这里后续添加 橡皮状态的判断和清除
-          drawLine(mousePosition, newMousePosition);
-          setMousePosition(newMousePosition);
+          // 橡皮状态的判断和清除,clearArc 方法见下方单独说明
+          if (eraserEnabled) {
+            const newr = Number(lineWidth / 2);
+            clearArcFun({
+              x: newMousePosition.x,
+              y: newMousePosition.y,
+              r: newr,
+            });
+          } else {
+            drawLine(mousePosition, newMousePosition);
+            setMousePosition(newMousePosition);
+          }
         }
       }
     },
@@ -178,4 +187,53 @@
 
 - ### 圆形橡皮清除
 
-  Canvas 自带的 clear 为 矩形清除画板的路径，圆形清除原理
+  由于画笔路径为圆形，并且 Windows 和 macOS 自带的作图，橡皮擦除都是圆形擦除，所以想实现橡皮圆形擦除。
+
+  - 实现原理
+
+    ![clearArc](../img/clearArc.png)
+
+    将圆形分割成若干个矩形，用 Canvas 自带的清除路径 api（矩形清除）递归清除。
+    **`（ x,y ）`** : 鼠标点击坐标
+    **`radius`** : 圆形半径：画笔宽度 **lineWidth / 2**
+    **`stepClear`** : 分割成的若干矩形长度的递减阶梯
+    **`calcWidth`** : 若干矩形的一半长度 ：**radius** - **stepClear**
+    **`calcHeight`** : 若干矩形的一半宽度：**radius²** - **calcWidth²**
+    **`posX`** ：清除矩形的起始横坐标：**x** - **calcWidth**
+    **`posY`** ：清除矩形的起始纵坐标：**y** - **calcHeight**
+
+  - 实现代码
+
+    ```tsx
+    const clearArcFun = useCallback(
+      ({ x, y, r }: ClearArcOptions) => {
+        if (!canvasRef.current) {
+          return;
+        }
+        const canvas: HTMLCanvasElement = canvasRef.current;
+        const context = canvas.getContext("2d");
+        if (context) {
+          var stepClear = 1;
+          clearArc(x, y, r, context, stepClear);
+        }
+      },
+      [clearArc]
+    );
+
+    const clearArc = useCallback((x, y, radius, ctx, stepClear) => {
+      var calcWidth = radius - stepClear;
+      var calcHeight = Math.sqrt(radius * radius - calcWidth * calcWidth);
+
+      var posX = x - calcWidth;
+      var posY = y - calcHeight;
+
+      var widthX = 2 * calcWidth;
+      var heightY = 2 * calcHeight;
+
+      if (stepClear <= radius) {
+        ctx.clearRect(posX, posY, widthX, heightY);
+        stepClear += 1;
+        clearArc(x, y, radius, ctx, stepClear);
+      }
+    }, []);
+    ```
