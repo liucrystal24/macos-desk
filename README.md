@@ -143,9 +143,9 @@ yarn start
 
 ## 总结
 
-1. [Dock 栏 macOS 动效原理及实现](http://www.baidu.com)
+1. [Dock 栏 macOS 动效原理及实现](https://github.com/liucrystal24/Notebook/issues/14)
 2. [画板工具栏和状态控制](http://www.baidu.com)
-3. [画板（一）：绘画和圆形橡皮擦除](http://www.baidu.com)
+3. [画板（一）：绘画和圆形橡皮擦除](https://github.com/liucrystal24/Notebook/issues/15)
 4. [画板（二）：画笔宽度和调色盘](http://www.baidu.com)
 5. [画板（三）：画板历史存储：撤销和前进](http://www.baidu.com)
 6. [画板（四）：清空和保存画板](http://www.baidu.com)
