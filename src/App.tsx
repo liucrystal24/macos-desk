@@ -9,7 +9,7 @@ import "./styles/App.scss";
 function App() {
   return (
     <div className="App">
-      <Counter initialCount={0}></Counter>
+      {/* <Counter initialCount={0}></Counter> */}
       <div id="main-view"></div>
       <Footer />
     </div>
