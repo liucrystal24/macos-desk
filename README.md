@@ -18,25 +18,25 @@
 
   - 绘画 & 橡皮
 
-    ![canvasModal](record/gif/write & earaser.gif)
+    ![canvasModal](record/gif/write&earaser.gif)
 
   - 返回 & 前进
 
-    ![canvasModal](record/gif/back & go.gif)
+    ![canvasModal](record/gif/back&go.gif)
 
   - 画笔粗细 & 调色盘
 
-    ![canvasModal](record/gif/width & color.gif)
+    ![canvasModal](record/gif/width&color.gif)
 
   - 保存 & 清除
 
-    ![canvasModal](record/gif/save & clear.gif)
+    ![canvasModal](record/gif/save&clear.gif)
 
 - 弹窗
 
   - 拖拽 & 最小化 & 最大化
 
-    ![canvasModal](record/gif/draggle & max.gif)
+    ![canvasModal](record/gif/draggle&max.gif)
 
 ## 项目演示
 
@@ -143,9 +143,10 @@ yarn start
 
 ## 总结
 
-1. [Dock 栏 macOS 动效原理及实现](http://www.baidu.com)
-2. [画板（一）：绘画和圆形橡皮擦除](http://www.baidu.com)
-3. [画板（二）：画笔宽度和调色盘](http://www.baidu.com)
-4. [画板（三）：画板历史存储：撤销和前进](http://www.baidu.com)
-5. [画板（四）：清空和保存画板](http://www.baidu.com)
-6. [弹窗拖拽和最大化、最小化](http://www.baidu.com)
+1. [Dock 栏 macOS 动效原理及实现](https://github.com/liucrystal24/Notebook/issues/14)
+2. [画板工具栏和状态控制](http://www.baidu.com)
+3. [画板（一）：绘画和圆形橡皮擦除](https://github.com/liucrystal24/Notebook/issues/15)
+4. [画板（二）：画笔宽度和调色盘](http://www.baidu.com)
+5. [画板（三）：画板历史存储：撤销和前进](http://www.baidu.com)
+6. [画板（四）：清空和保存画板](http://www.baidu.com)
+7. [弹窗拖拽和最大化、最小化](http://www.baidu.com)
