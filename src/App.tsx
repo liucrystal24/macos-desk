@@ -1,6 +1,6 @@
 import React from "react";
 import { Footer } from "./components/footer/Footer";
-import { Counter } from "./hooks/hooktest";
+// import { Counter } from "./hooks/hooktest";
 
 // import { UseHeader } from "./components/header/Header";
 // import { Canvas } from "./components/drawing/Canvas";

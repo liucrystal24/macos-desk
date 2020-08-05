@@ -144,7 +144,7 @@ yarn start
 ## 总结
 
 1. [Dock 栏 macOS 动效原理及实现](https://github.com/liucrystal24/Notebook/issues/14)
-2. [工具栏图标样式设置和状态管理](https://github.com/liucrystal24/Notebook/issues/18)
+2. [工具栏图标样式获取和封装](https://github.com/liucrystal24/Notebook/issues/18)
 3. [画板（一）：绘画和圆形橡皮擦除](https://github.com/liucrystal24/Notebook/issues/15)
 4. [画板（二）：画笔宽度和调色盘](https://github.com/liucrystal24/Notebook/issues/16)
 5. [画板（三）：撤销和前进/清空和保存](https://github.com/liucrystal24/Notebook/issues/17)
