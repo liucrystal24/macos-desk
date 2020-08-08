@@ -5,7 +5,7 @@
 
 - ### 效果图
 
-  ![canvasModal](../gif/write&earaser.gif)
+  ![canvasModal](../gif/tools.gif)
 
 - ### 图标样式采样
 
@@ -99,6 +99,6 @@
     classNames="toolbox"
     unmountOnExit
   >
-  // 工具栏图标
+  // ... 此处添加工具栏图标
   </CSSTransition>
   ```
