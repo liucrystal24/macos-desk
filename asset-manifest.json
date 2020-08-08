@@ -1,0 +1,32 @@
+{
+  "files": {
+    "main.css": "/macos-desk/static/css/main.ab0a6fbb.chunk.css",
+    "main.js": "/macos-desk/static/js/main.a08def72.chunk.js",
+    "main.js.map": "/macos-desk/static/js/main.a08def72.chunk.js.map",
+    "runtime-main.js": "/macos-desk/static/js/runtime-main.91beae61.js",
+    "runtime-main.js.map": "/macos-desk/static/js/runtime-main.91beae61.js.map",
+    "static/js/2.d6f9fc38.chunk.js": "/macos-desk/static/js/2.d6f9fc38.chunk.js",
+    "static/js/2.d6f9fc38.chunk.js.map": "/macos-desk/static/js/2.d6f9fc38.chunk.js.map",
+    "index.html": "/macos-desk/index.html",
+    "precache-manifest.b37a84ebb23c4e29ad57b9b747989434.js": "/macos-desk/precache-manifest.b37a84ebb23c4e29ad57b9b747989434.js",
+    "service-worker.js": "/macos-desk/service-worker.js",
+    "static/css/main.ab0a6fbb.chunk.css.map": "/macos-desk/static/css/main.ab0a6fbb.chunk.css.map",
+    "static/js/2.d6f9fc38.chunk.js.LICENSE.txt": "/macos-desk/static/js/2.d6f9fc38.chunk.js.LICENSE.txt",
+    "static/media/Calculator.png": "/macos-desk/static/media/Calculator.bb9998c1.png",
+    "static/media/Chrome.png": "/macos-desk/static/media/Chrome.44b3c5fc.png",
+    "static/media/Drawing.png": "/macos-desk/static/media/Drawing.336727e0.png",
+    "static/media/Finder.png": "/macos-desk/static/media/Finder.e7ddfa6b.png",
+    "static/media/Launchpad.png": "/macos-desk/static/media/Launchpad.dab98b41.png",
+    "static/media/PrefApp.png": "/macos-desk/static/media/PrefApp.64914db7.png",
+    "static/media/Terminal.png": "/macos-desk/static/media/Terminal.148e3c64.png",
+    "static/media/gougu.jpg": "/macos-desk/static/media/gougu.e314cff8.jpg",
+    "static/media/wallpaper.jpg": "/macos-desk/static/media/wallpaper.f9f13a3a.jpg",
+    "static/media/App.scss": "/macos-desk/static/media/wallpaper_small.2863d56b.jpg"
+  },
+  "entrypoints": [
+    "static/js/runtime-main.91beae61.js",
+    "static/js/2.d6f9fc38.chunk.js",
+    "static/css/main.ab0a6fbb.chunk.css",
+    "static/js/main.a08def72.chunk.js"
+  ]
+}
